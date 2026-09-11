@@ -2,47 +2,88 @@
 import React, { useState, useEffect, useRef } from 'react';
 import './LiveChat.css';
 import { FaArrowLeft, FaPaperPlane, FaHeadset } from 'react-icons/fa';
+import { db } from './firebase';
+
+import { collection, addDoc, query, orderBy, onSnapshot, serverTimestamp, setDoc, doc, getDocs, deleteDoc } from 'firebase/firestore';
 
 function LiveChat({ user, goBack }) {
-  const [messages, setMessages] = useState([
-    { sender: 'team', text: 'Hello! Welcome to Crodyto support. How can we help you today?' }
-  ]);
+  const [messages, setMessages] = useState([]);
   const [input, setInput] = useState('');
-  
   const chatEndRef = useRef(null);
-  const timeoutRef = useRef(null);
 
-  // নতুন মেসেজ এলে অটোমেটিক নিচে স্ক্রল করার জন্য
+  const roomName = user ? `chat_${user.uid}` : null;
+
+  
+  useEffect(() => {
+    if (!roomName) return;
+
+    const q = query(collection(db, roomName), orderBy('timestamp', 'asc'));
+    const unsubscribe = onSnapshot(q, (snapshot) => {
+      const msgs = snapshot.docs.map(document => ({
+        id: document.id,
+        ...document.data()
+      }));
+      setMessages(msgs);
+    });
+
+    return () => unsubscribe();
+  }, [roomName]);
+
+
   useEffect(() => {
     chatEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages]);
 
-  const handleSendMessage = (e) => {
+ 
+  const handleSendMessage = async (e) => {
     e.preventDefault();
-    if (!input.trim()) return;
+    if (!input.trim() || !roomName || !user) return;
 
-    // ইউজারের মেসেজ অ্যাড করা
-    setMessages((prev) => [...prev, { sender: 'user', text: input }]);
+    const messageText = input;
     setInput('');
 
-    // আগের কোনো ২০ সেকেন্ডের টাইমার থাকলে সেটা ক্লিয়ার করা
-    if (timeoutRef.current) {
-      clearTimeout(timeoutRef.current);
-    }
+   
+    await addDoc(collection(db, roomName), {
+      text: messageText,
+      sender: 'user',
+      timestamp: serverTimestamp()
+    });
 
-    // নতুন করে ২০ সেকেন্ডের টাইমার সেট করা
-    timeoutRef.current = setTimeout(() => {
-      setMessages((prev) => [
-        ...prev,
-        { 
-          sender: 'system', 
-          text: 'There is no team member currently available. Please leave your message or try again later.' 
-        }
-      ]);
-    }, 20000); // 20000 ms = 20 seconds
+   
+    await setDoc(doc(db, "active_chats", user.uid), {
+      uid: user.uid,
+      email: user.email,
+      lastMessage: messageText,
+      timestamp: serverTimestamp()
+    });
   };
 
-  // যদি ইউজার লগইন করা না থাকে
+  
+  const handleLeaveChat = async () => {
+    if (user && roomName) {
+      try {
+        
+        const q = query(collection(db, roomName));
+        const snapshot = await getDocs(q);
+        
+        const deletePromises = snapshot.docs.map((document) => 
+          deleteDoc(doc(db, roomName, document.id))
+        );
+        await Promise.all(deletePromises); 
+
+        
+        await deleteDoc(doc(db, "active_chats", user.uid));
+        
+      } catch (error) {
+        console.error("Error clearing chat history: ", error);
+      }
+    }
+    
+    
+    goBack();
+  };
+
+  
   if (!user) {
     return (
       <div className="live-chat-page">
@@ -57,11 +98,12 @@ function LiveChat({ user, goBack }) {
     );
   }
 
-  // যদি ইউজার লগইন থাকে তবে চ্যাট দেখাবে
+ 
   return (
     <div className="live-chat-page">
-      <button className="back-btn" onClick={goBack}>
-        <FaArrowLeft /> Back to Options
+      
+      <button className="back-btn" onClick={handleLeaveChat}>
+        <FaArrowLeft /> Leave Chat
       </button>
 
       <div className="chat-container">
@@ -70,12 +112,15 @@ function LiveChat({ user, goBack }) {
         </div>
         
         <div className="chat-messages">
-          {messages.map((msg, index) => (
-            <div key={index} className={`message ${msg.sender}`}>
+          {messages.length === 0 && (
+            <div className="message team">Hi {user.email.split('@')[0]}! How can we help you?</div>
+          )}
+          
+          {messages.map((msg) => (
+            <div key={msg.id} className={`message ${msg.sender}`}>
               {msg.text}
             </div>
           ))}
-          {/* স্ক্রল করার জন্য ডামি div */}
           <div ref={chatEndRef} />
         </div>
 
