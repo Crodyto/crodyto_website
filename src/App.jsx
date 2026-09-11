@@ -20,13 +20,16 @@ import {
   signOut 
 } from 'firebase/auth';
 
-// নতুন Consultant পেজ ইম্পোর্ট করা হলো
+// অন্যান্য পেজ ইম্পোর্ট করা হলো
 import Consultant from './Consultant';
+import LiveChat from './LiveChat';
 
 function App() {
   const [showModal, setShowModal] = useState(false);
   const [isSignUp, setIsSignUp] = useState(false);
-  const [currentPage, setCurrentPage] = useState('home'); // ২. পেজ ট্র্যাক করার State (ঠিক আছে)
+  
+  // পেজ ট্র্যাক করার State
+  const [currentPage, setCurrentPage] = useState('home'); 
   
   // Auth States
   const [user, setUser] = useState(null);
@@ -148,12 +151,34 @@ function App() {
     { name: "Android/iOS", icon: <FaMobileAlt /> }
   ];
 
-  // 👉 ৪. এই লজিকটা মিসিং ছিল! (যদি currentPage 'consultant' হয়, তবে Consultant পেজ দেখাবে)
+
+  // ==========================================
+  // পেজ রেন্ডার করার লজিক (Routing without React Router)
+  // ==========================================
+
+  // ১. যদি currentPage 'consultant' হয়, তবে Consultant পেজ দেখাবে
   if (currentPage === 'consultant') {
-    return <Consultant goBack={() => setCurrentPage('home')} />;
+    return (
+      <Consultant 
+        goBack={() => setCurrentPage('home')} 
+        goToLiveChat={() => setCurrentPage('liveChat')} // এখান থেকে LiveChat পেজে যাওয়ার সিগন্যাল যাচ্ছে
+      />
+    );
   }
 
-  // মেইন ওয়েবসাইট রেন্ডার
+  // ২. যদি currentPage 'liveChat' হয়, তবে LiveChat পেজ দেখাবে
+  if (currentPage === 'liveChat') {
+    return (
+      <LiveChat 
+        user={user} // ইউজার লগইন আছে কিনা চেক করার জন্য পাঠানো হলো
+        goBack={() => setCurrentPage('consultant')} // ব্যাক করলে আবার Consultant পেজে আসবে
+      />
+    );
+  }
+
+  // ==========================================
+  // ৩. মেইন ওয়েবসাইট রেন্ডার (যদি currentPage 'home' থাকে)
+  // ==========================================
   return (
     <div className="app">
       
@@ -202,6 +227,7 @@ function App() {
           <div className="hero-badge">Next-Gen IT & Software Solutions</div>
           <h1>Empowering Your Digital Future with Innovation</h1>
           <p>We transform complex business ideas into high-performing digital realities using AI, Web & Mobile technologies.</p>
+          {/* এই বাটনে ক্লিক করলে Home -> Consultant পেজে যাবে */}
           <button className="btn-primary" onClick={() => setCurrentPage('consultant')}>
             Book a Free Consultation
           </button>
