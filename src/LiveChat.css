@@ -1,0 +1,126 @@
+/* src/LiveChat.css */
+.live-chat-page {
+  min-height: 100vh;
+  background-color: #f4f7f6;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.chat-container {
+  width: 100%;
+  max-width: 600px;
+  background: white;
+  border-radius: 15px;
+  box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+  display: flex;
+  flex-direction: column;
+  height: 80vh;
+  overflow: hidden;
+  margin-top: 20px;
+}
+
+.chat-header {
+  background-color: #0056b3;
+  color: white;
+  padding: 15px 20px;
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  font-size: 1.2rem;
+  font-weight: bold;
+}
+
+.chat-messages {
+  flex-grow: 1;
+  padding: 20px;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  background-color: #fafafa;
+}
+
+.message {
+  max-width: 75%;
+  padding: 12px 15px;
+  border-radius: 10px;
+  font-size: 0.95rem;
+  line-height: 1.4;
+}
+
+.message.user {
+  align-self: flex-end;
+  background-color: #0056b3;
+  color: white;
+  border-bottom-right-radius: 0;
+}
+
+.message.team {
+  align-self: flex-start;
+  background-color: #e2e8f0;
+  color: #333;
+  border-bottom-left-radius: 0;
+}
+
+.message.system {
+  align-self: center;
+  background-color: #ffcccc;
+  color: #d8000c;
+  font-size: 0.85rem;
+  padding: 8px 12px;
+  border-radius: 20px;
+  max-width: 90%;
+  text-align: center;
+}
+
+.chat-input-form {
+  display: flex;
+  padding: 15px;
+  background: white;
+  border-top: 1px solid #eee;
+}
+
+.chat-input-form input {
+  flex-grow: 1;
+  padding: 12px 15px;
+  border: 1px solid #ddd;
+  border-radius: 25px;
+  outline: none;
+  font-size: 1rem;
+}
+
+.chat-input-form input:focus {
+  border-color: #0056b3;
+}
+
+.send-btn {
+  background-color: #0056b3;
+  color: white;
+  border: none;
+  border-radius: 50%;
+  width: 45px;
+  height: 45px;
+  margin-left: 10px;
+  cursor: pointer;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 1.2rem;
+  transition: background 0.3s;
+}
+
+.send-btn:hover {
+  background-color: #004494;
+}
+
+.auth-error-container {
+  text-align: center;
+  margin-top: 100px;
+}
+
+.auth-error-container h2 {
+  color: #e11d48;
+  margin-bottom: 15px;
+}
