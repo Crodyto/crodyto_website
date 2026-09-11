@@ -20,9 +20,13 @@ import {
   signOut 
 } from 'firebase/auth';
 
+// নতুন Consultant পেজ ইম্পোর্ট করা হলো
+import Consultant from './Consultant';
+
 function App() {
   const [showModal, setShowModal] = useState(false);
   const [isSignUp, setIsSignUp] = useState(false);
+  const [currentPage, setCurrentPage] = useState('home'); // ২. পেজ ট্র্যাক করার State (ঠিক আছে)
   
   // Auth States
   const [user, setUser] = useState(null);
@@ -144,6 +148,12 @@ function App() {
     { name: "Android/iOS", icon: <FaMobileAlt /> }
   ];
 
+  // 👉 ৪. এই লজিকটা মিসিং ছিল! (যদি currentPage 'consultant' হয়, তবে Consultant পেজ দেখাবে)
+  if (currentPage === 'consultant') {
+    return <Consultant goBack={() => setCurrentPage('home')} />;
+  }
+
+  // মেইন ওয়েবসাইট রেন্ডার
   return (
     <div className="app">
       
@@ -192,7 +202,9 @@ function App() {
           <div className="hero-badge">Next-Gen IT & Software Solutions</div>
           <h1>Empowering Your Digital Future with Innovation</h1>
           <p>We transform complex business ideas into high-performing digital realities using AI, Web & Mobile technologies.</p>
-          <button className="btn-primary">Book a Free Consultation</button>
+          <button className="btn-primary" onClick={() => setCurrentPage('consultant')}>
+            Book a Free Consultation
+          </button>
         </div>
       </header>
 
@@ -293,7 +305,7 @@ function App() {
             <h3>E-Commerce Web Template</h3>
             <div className="product-details">
               <p>A fully functional e-commerce React template ready for deployment.</p>
-              <div className="price">$49.00</div>
+              <div className="price">Rs./-999</div>
               <button className="btn-buy"><FaCloudDownloadAlt /> Buy Now</button>
             </div>
           </div>
@@ -302,7 +314,7 @@ function App() {
             <h3>Food Delivery App UI</h3>
             <div className="product-details">
               <p>Complete cross-platform Flutter UI kit for food delivery businesses.</p>
-              <div className="price">$39.00</div>
+              <div className="price">Rs./-1,499</div>
               <button className="btn-buy"><FaCloudDownloadAlt /> Buy Now</button>
             </div>
           </div>
