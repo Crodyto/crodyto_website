@@ -1,8 +1,8 @@
 // src/firebase.js
 import { initializeApp } from "firebase/app";
 import { getAuth, GoogleAuthProvider } from "firebase/auth";
+import { getFirestore } from "firebase/firestore"; // রিয়েল-টাইম চ্যাটের ডাটাবেস
 
-// তোর আসল Firebase Config এখানে বসাবি
 const firebaseConfig = {
   apiKey: "AIzaSyDmCjNXRF9aTsiZx-ZX-qYnDfHZHSmeiaA",
   authDomain: "crodyto-bac3b.firebaseapp.com",
@@ -20,7 +20,5 @@ const app = initializeApp(firebaseConfig);
 export const auth = getAuth(app);
 export const googleProvider = new GoogleAuthProvider();
 
-
-
-
-
+// Initialize Firestore Database (Customer & Admin Chat এর জন্য)
+export const db = getFirestore(app);
