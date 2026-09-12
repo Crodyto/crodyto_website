@@ -45,6 +45,63 @@ function App() {
     return () => unsubscribe();
   }, []);
 
+  // SEO metadata for the main Crodyto page.
+  // The primary SEO tags are kept in index.html; this keeps the SPA metadata
+  // correct when React renders or re-renders the application.
+  useEffect(() => {
+    document.documentElement.lang = 'en';
+
+    document.title = 'Crodyto | IT Services, Software Development & AI Solutions';
+
+    const setMeta = (name, content) => {
+      let tag = document.querySelector(`meta[name="${name}"]`);
+      if (!tag) {
+        tag = document.createElement('meta');
+        tag.setAttribute('name', name);
+        document.head.appendChild(tag);
+      }
+      tag.setAttribute('content', content);
+    };
+
+    const setPropertyMeta = (property, content) => {
+      let tag = document.querySelector(`meta[property="${property}"]`);
+      if (!tag) {
+        tag = document.createElement('meta');
+        tag.setAttribute('property', property);
+        document.head.appendChild(tag);
+      }
+      tag.setAttribute('content', content);
+    };
+
+    setMeta(
+      'description',
+      'Crodyto is an IT services and technology company providing custom software development, web applications, SaaS solutions, AI automation, AI agents and digital solutions for modern businesses.'
+    );
+
+    setMeta('robots', 'index, follow');
+
+    setPropertyMeta('og:title', 'Crodyto | IT Services, Software Development & AI Solutions');
+    setPropertyMeta(
+      'og:description',
+      'Custom software development, web applications, SaaS platforms, AI automation and AI-powered solutions for modern businesses.'
+    );
+    setPropertyMeta('og:url', 'https://crodyto.in/');
+    setPropertyMeta('og:type', 'website');
+    setPropertyMeta('og:site_name', 'Crodyto');
+
+    let canonical = document.querySelector('link[rel="canonical"]');
+    if (!canonical) {
+      canonical = document.createElement('link');
+      canonical.setAttribute('rel', 'canonical');
+      document.head.appendChild(canonical);
+    }
+    canonical.setAttribute('href', 'https://crodyto.in/');
+
+    return () => {
+      // Keep the metadata in place for crawlers and social sharing.
+    };
+  }, []);
+
   // Email/Password Registration
   const handleEmailSignUp = async (e) => {
     e.preventDefault();
@@ -183,7 +240,7 @@ function App() {
     <div className="app">
       
       {/* Navbar Section */}
-      <nav className="navbar">
+      <nav className="navbar" aria-label="Main navigation">
         <div className="logo-container">
           <img src="/logo.png" alt="Crodyto Logo" className="logo" />
           <h2>Crodyto</h2>
@@ -225,8 +282,8 @@ function App() {
       <header className="hero">
         <div className="hero-content">
           <div className="hero-badge">Next-Gen IT & Software Solutions</div>
-          <h1>Empowering Your Digital Future with Innovation</h1>
-          <p>We transform complex business ideas into high-performing digital realities using AI, Web & Mobile technologies.</p>
+          <h1>Crodyto — IT Services, Software Development & AI Solutions</h1>
+          <p>We build custom software, web applications, SaaS platforms, mobile apps and AI-powered automation solutions that help modern businesses grow.</p>
           {/* এই বাটনে ক্লিক করলে Home -> Consultant পেজে যাবে */}
           <button className="btn-primary" onClick={() => setCurrentPage('consultant')}>
             Book a Free Consultation
@@ -258,7 +315,7 @@ function App() {
         <div className="about-container">
           <div className="about-text">
             <span className="about-subtitle">WHO WE ARE</span>
-            <h2>Driven by Excellence, Built for Scale</h2>
+            <h2>About Crodyto — Built for Scale</h2>
             <p>
               At <strong>Crodyto</strong>, we build digital products that drive growth and operational efficiency. From bespoke enterprise software to intelligent AI agents, we merge technical expertise with modern design principles.
             </p>
@@ -280,7 +337,7 @@ function App() {
           <div className="about-image-box">
             <img 
               src="https://images.unsplash.com/photo-1522071820081-009f0129c71c?auto=format&fit=crop&w=800&q=80" 
-              alt="Crodyto Team Working Together" 
+              alt="Crodyto technology team working together on software and digital solutions" 
               className="about-img"
             />
           </div>
